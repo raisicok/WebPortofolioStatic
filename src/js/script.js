@@ -216,50 +216,54 @@ function initActiveNavHighlight() {
   });
 }
 
-// ========== Contact Form Handler ==========
+// ========== Contact Form Handler (AJAX via FormSubmit.co) ==========
 function handleSubmit(e) {
   e.preventDefault();
 
   const form = e.target;
-  const btn = form.querySelector('button[type="submit"]');
+  const btn = document.getElementById('submit-btn');
+  const status = document.getElementById('form-status');
   const originalText = btn.innerHTML;
 
-  // Get form values
-  const nama = form.querySelector('input[placeholder="Nama lengkap Anda"]').value;
-  const email = form.querySelector('input[type="email"]').value;
-  const subjek = form.querySelector('input[placeholder="Subjek pesan"]').value;
-  const pesan = form.querySelector('textarea').value;
-
-  // Build mailto link
-  const subject = encodeURIComponent(subjek);
-  const body = encodeURIComponent(
-    `Halo Muhammad Rais,\n\n${pesan}\n\n---\nDari: ${nama}\nEmail: ${email}`
-  );
-  const mailtoLink = `mailto:raissick@gmail.com?subject=${subject}&body=${body}`;
-
-  // Show loading animation
-  btn.innerHTML = `
-    <svg class="animate-spin h-5 w-5 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-    </svg>
-  `;
+  // Show loading
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
   btn.disabled = true;
+  status.classList.add('hidden');
 
-  // Open email client
-  window.location.href = mailtoLink;
+  // Send via fetch to FormSubmit.co
+  const formData = new FormData(form);
 
-  setTimeout(() => {
-    btn.innerHTML = '✓ Email Client Terbuka!';
-    btn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
-    btn.classList.add('bg-green-500');
-
-    setTimeout(() => {
-      btn.innerHTML = originalText;
-      btn.disabled = false;
-      btn.classList.remove('bg-green-500');
-      btn.classList.add('bg-blue-600', 'hover:bg-blue-700');
-      form.reset();
-    }, 2500);
-  }, 1000);
+  fetch('https://formsubmit.co/ajax/raissick@gmail.com', {
+    method: 'POST',
+    body: formData
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // Success
+        btn.innerHTML = '<i class="fas fa-check"></i> Terkirim!';
+        btn.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+        btn.classList.add('bg-green-500');
+        status.textContent = '✅ Pesan berhasil dikirim ke Gmail!';
+        status.className = 'mt-4 text-center text-sm text-green-400';
+        form.reset();
+      } else {
+        throw new Error('Gagal mengirim');
+      }
+    })
+    .catch(error => {
+      btn.innerHTML = '<i class="fas fa-times"></i> Gagal!';
+      btn.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+      btn.classList.add('bg-red-500');
+      status.textContent = '❌ Gagal mengirim. Coba lagi atau hubungi via WhatsApp.';
+      status.className = 'mt-4 text-center text-sm text-red-400';
+    })
+    .finally(() => {
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        btn.classList.remove('bg-green-500', 'bg-red-500');
+        btn.classList.add('bg-blue-500', 'hover:bg-blue-600');
+      }, 3000);
+    });
 }
