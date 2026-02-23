@@ -90,38 +90,20 @@ function initNavbarScroll() {
   const navbar = document.getElementById('navbar');
   if (!navbar) return;
 
-  const navLinks = navbar.querySelectorAll('.nav-link');
   const logo = navbar.querySelector('.logo-text');
-  const menuToggle = document.getElementById('menu-toggle');
 
   window.addEventListener('scroll', () => {
     if (window.scrollY > 80) {
       navbar.classList.add('navbar-scrolled');
-      navLinks.forEach(l => {
-        l.classList.remove('text-white');
-        l.classList.add('text-gray-700');
-      });
       if (logo) {
         logo.classList.remove('text-white');
-        logo.classList.add('text-blue-700');
-      }
-      if (menuToggle) {
-        menuToggle.classList.remove('text-white');
-        menuToggle.classList.add('text-gray-700');
+        logo.classList.add('text-blue-400');
       }
     } else {
       navbar.classList.remove('navbar-scrolled');
-      navLinks.forEach(l => {
-        l.classList.remove('text-gray-700');
-        l.classList.add('text-white');
-      });
       if (logo) {
-        logo.classList.remove('text-blue-700');
+        logo.classList.remove('text-blue-400');
         logo.classList.add('text-white');
-      }
-      if (menuToggle) {
-        menuToggle.classList.remove('text-gray-700');
-        menuToggle.classList.add('text-white');
       }
     }
   });
