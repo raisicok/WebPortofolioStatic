@@ -117,14 +117,14 @@ function initMobileMenu() {
 
   if (!toggle || !menu) return;
 
-  toggle.addEventListener('click', () => menu.classList.add('open'));
+  toggle.addEventListener('click', () => menu.classList.add('active'));
 
   if (closeBtn) {
-    closeBtn.addEventListener('click', () => menu.classList.remove('open'));
+    closeBtn.addEventListener('click', () => menu.classList.remove('active'));
   }
 
   menu.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => menu.classList.remove('open'));
+    link.addEventListener('click', () => menu.classList.remove('active'));
   });
 }
 
